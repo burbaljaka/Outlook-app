@@ -1,19 +1,126 @@
-{% extends "tutorial/layout.html" %}
-{% block content %}
-<h1>Your Email</h1>
-<table class="table">
-  <tr>
-    <th>From</th>
-    <th>Subject</th>
-    <th>Received</th>
-  </tr>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Python Outlook API Sample</title>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
-  {% for message in messages %}
-    <tr>
-      <td>{{ message.from.emailAddress.name }}</td>
-      <td>{{ message.subject }}</td>
-      <td>{{ message.receivedDateTime }}</td>
-    </tr>
-  {% endfor %}
-</table>
-{% endblock %}
+  <!-- Optional theme -->
+
+</head>
+<body style="padding-top: 70px;">
+  <nav class="navbar navbar-expand-lg navbar-inverse navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/">Личный кабинет</a>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav authed-nav">
+          <li id='home-nav'><a href="/">Домашняя</a></li>
+          <span class="navbar-text" data-placement="right">{{ user_name }}</span>
+          <span class="navbar-text" data-placement="right">Температура в тени: {{ city_weather }}°С</span>
+        </ul>
+
+      </div>
+    </div>
+  </nav>
+  <div class="container">
+
+
+  <div class="col-lg-6 col-xs-6">
+    <div class="card" style="width: 20rem;">
+      <div class="card-body ">
+        <h5 class="card-text" style="font-size: 41px">Письма</h5>
+        <h1 class="card-text" style="font-size: 120px;text-align: justify">{{ emails_counter }}</h1>
+        <a id="button_emails_list" class="btn btn-primary" href="#" role="button" onclick = "set_emails_display()">Список</a>
+        <a class="btn btn-primary" href="https://outlook.office365.com" role="button">В почту</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6 col-xs-6">
+    <div class="card" style="width: 20rem;">
+      <div class="card-body ">
+        <h5 class="card-text" style="font-size: 41px">Встречи</h5>
+        <h1 class="card-text" style="font-size: 120px;text-align: justify">{{ events_counter }}</h1>
+        <a id="button_events_list" class="btn btn-primary" href="#" role="button" onclick = "set_events_display()">Список</a>
+        <a class="btn btn-primary" href="https://outlook.office.com/calendar/" role="button">В календарь</a>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!--<a class="btn btn-primary" href="https://outlook.office365.com/owa/" role="button">Открыть почту</a>?-->
+  <div class="container">
+  <div id = "emails_table" class="container" style = "display: none">
+
+    <p></p>
+    <center><font size="7">Непрочитанные письма</font></center>
+    <table class="table">
+      <tr>
+        <th>От</th>
+        <th>Тема</th>
+        <th>Получено</th>
+      </tr>
+
+    {% for message in messages %}
+      <tr>
+        <td><a href="{{ message.webLink }}">{{ message.from.emailAddress.name }}</a></td>
+        <td><a href="{{ message.webLink }}">{{ message.subject }}</a></td>
+        <td><a href="{{ message.webLink }}">{{ message.receivedDateTime }}</a></td>
+      </tr>
+    {% endfor %}
+    </table>
+  </div>
+  </div>
+
+
+  <div class="container">
+  <div id = "events_table" class="container" style = "display: none">
+    <center><font size="7">Сегодняшние встречи</font></center>
+    <table class="table">
+      <tr>
+        <th>Тема</th>
+        <th>Дата начала</th>
+        <th>Время начала</th>
+      </tr>
+
+    {% for event in events %}
+      <tr>
+        <td><a href="{{ event.webLink }}">{{ event.subject }}</a></td>
+        <td><a href="{{ event.webLink }}">{{ event.start.date }}</a></td>
+        <td><a href="{{ event.webLink }}">{{ event.start.time }}</a></td>
+      </tr>
+    {% endfor %}
+    </table>
+  </div>
+  </div>
+  <script type="text/javascript">
+    function set_emails_display(){
+      if (emails_table.style.display==='none'){
+        emails_table.style.display = 'block'
+        button_emails_list.text = 'Скрыть'
+      }else{
+        emails_table.style.display='none'
+        button_emails_list.text = 'Список'
+      }
+    }
+    function set_events_display(){
+      if (events_table.style.display==='none'){
+        events_table.style.display = 'block'
+        button_events_list.text = 'Скрыть'
+      }else{
+        events_table.style.display='none'
+        button_events_list.text = 'Список'
+      }
+    }
+  </script>
+
+
+</body>
+</html>
