@@ -1,11 +1,12 @@
 import requests
 import uuid
 import json
+from urllib.parse import quote
 
 graph_endpoint = 'https://graph.microsoft.com/v1.0{0}'
 
 # Generic API Sending
-def make_api_call(method, url, token, payload = None, parameters = None):
+def make_api_call(method, url, token, payload = None, parameters = None, filter = None):
   # Send these headers with all API calls
   headers = { 'User-Agent' : 'python_tutorial/1.0',
               'Authorization' : 'Bearer {0}'.format(token),
@@ -56,11 +57,15 @@ def get_my_messages(access_token):
   #  - Only first 10 results returned
   #  - Only return the ReceivedDateTime, Subject, and From fields
   #  - Sort the results by the ReceivedDateTime field in descending order
-  query_parameters = {'$top': '10',
-                      '$select': 'receivedDateTime,subject,from',
-                      '$orderby': 'receivedDateTime DESC'}
+
+  query_parameters = {
+                      '$top':'10',
+                      '$select': 'receivedDateTime,subject,from,isRead,weblink',
+                      '$orderby': 'receivedDateTime DESC'
+                      }
 
   r = make_api_call('GET', get_messages_url, access_token, parameters = query_parameters)
+  #print(r.url)
 
   if (r.status_code == requests.codes.ok):
     return r.json()
@@ -74,8 +79,8 @@ def get_my_events(access_token):
   #  - Only first 10 results returned
   #  - Only return the Subject, Start, and End fields
   #  - Sort the results by the Start field in ascending order
-  query_parameters = {'$top': '10',
-                      '$select': 'subject,start,end',
+  query_parameters = {#'$top': '10',
+                      '$select': 'subject,start,webLink',
                       '$orderby': 'start/dateTime ASC'}
 
   r = make_api_call('GET', get_events_url, access_token, parameters = query_parameters)
@@ -84,3 +89,14 @@ def get_my_events(access_token):
     return r.json()
   else:
     return "{0}: {1}".format(r.status_code, r.text)
+
+def get_my_tasks(access_token):
+    get_tasks_url = graph_endpoint.format('/me/planner')
+
+    query_parameters = {
+                        '$select':'title,'
+
+                        }
+
+    r = make_api_call('GET', get_tasks_url, access_token, parameters = query_parameters)
+    print r.json()
